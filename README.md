@@ -22,6 +22,12 @@ runParse(['src']);
 // Print the tree structure of the directories 'src' and 'tests',
 // excluding any files or directories that match the regular expression /__pycache__/
 runParse(['src', 'tests'], null, [/__pycache__/]);
+
+└─> file1.py
+  └─> MyClass
+    └─> my_method
+  └─> MyOtherClass
+    └─> my_other_method
 ```
 
 ## Installation
@@ -47,7 +53,6 @@ The `runParse()` function is the main entry point for the package. It takes the 
 ## Usage (global module)
 
 ```sh
-
 pytree --except "__init__.py" "test_*"
 
 pytree --dest /path/to/output.txt
@@ -55,12 +60,6 @@ pytree --dest /path/to/output.txt
 pytree --dir /path/to/directory1 /path/to/directory2
 
 pytree
-
-└─> file1.py
-  └─> MyClass
-    └─> my_method
-  └─> MyOtherClass
-    └─> my_other_method
 ```
 ## API
 
