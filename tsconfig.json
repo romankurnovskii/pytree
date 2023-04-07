@@ -1,28 +1,18 @@
-// https://www.typescriptlang.org/tsconfig#module
 {
-	"include": ["src"],
-	"exclude": ["dist", "node_modules"],
-	"compilerOptions": {
-		"target": "ES6",
-		"module": "ES6",
-		"jsx": "react-jsx",
-		"lib": ["DOM", "ESNext"],
-		"importHelpers": true,
-		"declaration": true,
-		"sourceMap": true,
-		"rootDir": "./src",
-		"outDir": "./dist/esm",
-		"strict": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"moduleResolution": "node",
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"allowJs": true, // Allow JavaScript files to be imported inside your project, instead of just .ts and .tsx files.
-		"checkJs": true, // When enabled then errors are reported in JS files. Equivalent of including // @ts-check
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true
-	}
+  "compilerOptions": {
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "allowJs": true, // Allow JavaScript files to be imported inside your project, instead of just .ts and .tsx files.
+    "checkJs": true, // When enabled then errors are reported in JS files. Equivalent of including // @ts-check
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
