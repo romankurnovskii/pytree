@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { ArgumentParser } from 'argparse';
-import { runParse } from './index.js'; // https://nodejs.org/api/esm.html#esm_mandatory_file_extensions
+import { run } from './index.js'; // https://nodejs.org/api/esm.html#esm_mandatory_file_extensions
 
 const parser = new ArgumentParser({
   description: 'Python file tree with methods',
@@ -28,4 +28,4 @@ const dirs = args.dir;
 const except = args.except.map((pattern: string) => new RegExp(pattern));
 const outputFile = args.dest;
 
-runParse(dirs, outputFile, except);
+run(dirs, outputFile, except);

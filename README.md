@@ -14,7 +14,13 @@ Pytree is a Node.js package that prints a tree of a Python project's directory s
 import { runParse } from 'pytree';
 
 // Print the tree structure of the current directory
-runParse();
+const structure = runParse();
+
+console.log(structure)
+// [{ level: 0, type: 'file', name: 'file1.py' },
+// { level: 1, type: 'class', name: 'MyClass' },
+// { level: 2, type: 'method', name: 'my_method' },
+// { level: 2, type: 'method', name: 'method_and_child' }]
 
 // Print the tree structure of the directory 'src'
 runParse(['src']);
@@ -46,7 +52,7 @@ yarn add pytree
 
 The `runParse()` function is the main entry point for the package. It takes the following arguments:
 
-- `dirs` (optional, default=['.']): an array of directories to search for Python files.
+- `dirs` (optional, default=['.']): an array of directories/files to search for Python files.
 - `outputFile` (optional): a file path to save the output to. If this argument is not provided, the output is printed to the console.
 - `except` (optional, default=[]): an array of regular expressions to exclude files or directories.
 
@@ -57,18 +63,19 @@ pytree --except "__init__.py" "test_*"
 
 pytree --dest /path/to/output.txt
 
-pytree --dir /path/to/directory1 /path/to/directory2
+pytree --dir /path/to/directory1 /path/to/file /path/to/directory2
 
 pytree
 ```
 ## API
 
-- **getClassAndMethodIndices(file: string): { classes: ClassInfo[]; methods: MethodInfo[]; }**
-- **walkTree(currentPath: string, level: number, output: OutputEntry[], except: RegExpExecArray[]): void**
-- **printOutput(output: OutputEntry[]): void**
-- **saveOutput(output: OutputEntry[], filePath: string): void**
-- **isPythonFile(filename: string): boolean**
-- **runParse(dirs = [], outputFile = null, except = [])**
+- **getClassAndMethodIndices(file: string) => { classes: ClassInfo[]; methods: MethodInfo[]; content: string}**
+- **walkTree(currentPath: string, level: number, output: OutputEntry[], except: RegExpExecArray[]) => void**
+- **printOutput(output: OutputEntry[]) => void**
+- **saveOutput(output: OutputEntry[], filePath: string) => void**
+- **isPythonFile(filename: string) => boolean**
+- **runParse(dirs = [], except = []) => output: OutputEntry[]** 
+- **run(dirs = [], outputFile = null, except = [])** - used for CLI command, prints result
 
 [package-name]: pytree
 [npm-url]: https://www.npmjs.com/package/pytree

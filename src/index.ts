@@ -134,7 +134,6 @@ export function walkTree(
           });
         }
       });
-
     }
   });
 }
@@ -158,15 +157,21 @@ export function isPythonFile(filename: string): boolean {
   return filename.endsWith('.py');
 }
 
-export function runParse(dirs: string[] = [], outputFile = null, except = []) {
+export function runParse(dirs: string[] = [], except = []) {
+  let output: OutputEntry[] = [];
   dirs.forEach((dir: string) => {
-    const output: OutputEntry[] = [];
-    walkTree(dir, 0, output, except);
-
-    if (outputFile) {
-      saveOutput(output, outputFile);
-    } else {
-      printOutput(output);
-    }
+    const dirOutput: OutputEntry[] = [];
+    walkTree(dir, 0, dirOutput, except);
+    output = output.concat(dirOutput);
   });
+  return output;
+}
+
+export function run(dirs: string[] = [], outputFile = null, except = []) {
+  const output = runParse(dirs, except);
+  if (outputFile) {
+    saveOutput(output, outputFile);
+  } else {
+    printOutput(output);
+  }
 }
