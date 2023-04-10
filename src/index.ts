@@ -20,10 +20,12 @@ interface OutputEntry {
 export function getClassAndMethodIndices(file: string): {
   classes: ClassInfo[];
   methods: MethodInfo[];
+  content: string;
 } {
   const content = fs.readFileSync(file, 'utf8');
   const classRegex = /^\s*class\s+(\w+)/gm;
   const methodRegex = /^\s*def\s+(\w+)\s*\(/gm;
+  const asyncMmethodRegex = /^\s*async def\s+(\w+)\s*\(/gm;
 
   let classMatch: RegExpExecArray | null;
   let methodMatch: RegExpExecArray | null;
@@ -38,7 +40,25 @@ export function getClassAndMethodIndices(file: string): {
     methods.push({ name: methodMatch[1], index: methodMatch.index });
   }
 
-  return { classes, methods };
+  while ((methodMatch = asyncMmethodRegex.exec(content)) !== null) {
+    methods.push({ name: methodMatch[1], index: methodMatch.index });
+  }
+
+  return { classes, methods, content };
+}
+
+function getLine(
+  content: string,
+  indexStart: number,
+  indexEnd: number
+): string {
+  const lineStart = content.lastIndexOf('\n', indexStart - 1) + 1;
+  const lineEnd = content.indexOf('\n', indexEnd);
+  const line = content.substring(
+    lineStart,
+    lineEnd !== -1 ? lineEnd : undefined
+  );
+  return line;
 }
 
 export function walkTree(
@@ -62,23 +82,59 @@ export function walkTree(
       !except.some((re: any) => re.test(filePath))
     ) {
       output.push({ level, type: 'file', name });
-      const { classes, methods } = getClassAndMethodIndices(filePath);
+      const { classes, methods, content } = getClassAndMethodIndices(filePath);
+
+      // Find the index of the first class
+      let firstClassIndex = classes.length > 0 ? classes[0].index : Infinity;
 
       classes.forEach((classInfo, classIdx) => {
         output.push({ level: level + 1, type: 'class', name: classInfo.name });
         const classStart = classInfo.index;
         const classEnd = classes[classIdx + 1]?.index || Infinity;
 
-        methods.forEach(methodInfo => {
+        // calculate class indentation level
+        const classLine = getLine(content, classStart, classEnd);
+        let classIndent = classLine.search(/\S/);
+        classIndent = Math.floor(classIndent / 4); // tab indent = 4 spaces
+
+        // let prevMethodStart = 0;
+        // let prevMethodLevel = level + 2;
+        methods.forEach((methodInfo, methodIdx) => {
           if (methodInfo.index > classStart && methodInfo.index < classEnd) {
+            const methodStart = methodInfo.index;
+            const methodEnd = classes[methodIdx + 1]?.index || Infinity;
+
+            // calculate method indentation level
+            const methodLine = getLine(content, methodStart, methodEnd);
+            let methodIndent = methodLine.search(/\S/);
+            methodIndent = Math.floor(methodIndent / 4); // tab indent = 4 spaces
+
+            const methodLevel = level + 1 + classIndent + methodIndent;
             output.push({
-              level: level + 2,
+              level: methodLevel,
               type: 'method',
               name: methodInfo.name,
             });
           }
+
+          // Update firstClassIndex if necessary
+          if (methodInfo.index < firstClassIndex) {
+            firstClassIndex = methodInfo.index;
+          }
         });
       });
+
+      // Check if there are any methods before the first class
+      methods.forEach(methodInfo => {
+        if (methodInfo.index <= firstClassIndex) {
+          output.push({
+            level: level + 1,
+            type: 'method',
+            name: methodInfo.name,
+          });
+        }
+      });
+
     }
   });
 }
