@@ -1,5 +1,5 @@
 {
     "name": "@romankurnovskii/pytree",
     "version": "1.2.0",
-    "exports": "./mod.js"
+    "exports": "./mod.ts"
 }
