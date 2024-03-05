@@ -44,3 +44,16 @@ jobs:
           shasum -a 256 ./dist/BrewMate-${{ env.VERSION }}-universal-mac.zip | awk '{print $1}' >> shasumver
           echo "SHA 256:" >> $GITHUB_STEP_SUMMARY
           cat shasumver >> $GITHUB_STEP_SUMMARY
+
+  publish-deno-jsr:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish package
+        run: npx jsr publish
