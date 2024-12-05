@@ -1,6 +1,6 @@
 {
   "name": "pytree",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Print python project tree structure with classes and methods",
   "license": "MIT",
   "homepage": "https://github.com/romankurnovskii/pytree#readme",
