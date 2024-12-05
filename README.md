@@ -59,13 +59,13 @@ The `runParse()` function is the main entry point for the package. It takes the 
 ## Usage (global module)
 
 ```sh
-pytree --except "__init__.py" "test_*"
+npx pytree
 
-pytree --dest /path/to/output.txt
+npx pytree --dir /path/to/directory1 /path/to/file /path/to/directory2
 
-pytree --dir /path/to/directory1 /path/to/file /path/to/directory2
+npx pytree --except "__init__.py" "test_*"
 
-pytree
+npx pytree --dest /path/to/output.txt
 ```
 ## API
 
