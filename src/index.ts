@@ -58,21 +58,21 @@ export function walkTree(
   currentPath: string,
   level: number,
   output: OutputEntry[],
-  except: RegExpExecArray[],
+  except: RegExp[],
 ): void {
   fs.readdirSync(currentPath).forEach(name => {
     const filePath = path.join(currentPath, name);
     const stat = fs.statSync(filePath);
 
     if (stat.isDirectory()) {
-      if (!except.some((re: any) => re.test(filePath))) {
+      if (!except.some(re => re.test(filePath))) {
         output.push({level, type: 'dir', name});
         walkTree(filePath, level + 1, output, except);
       }
     } else if (
       stat.isFile() &&
       isPythonFile(name) &&
-      !except.some((re: any) => re.test(filePath))
+      !except.some(re => re.test(filePath))
     ) {
       output.push({level, type: 'file', name});
       const {classes, methods, content} = getClassAndMethodIndices(filePath);
@@ -150,7 +150,7 @@ export function isPythonFile(filename: string): boolean {
   return filename.endsWith('.py');
 }
 
-export function runParse(dirs: string[] = [], except = []) {
+export function runParse(dirs: string[] = [], except: RegExp[] = []) {
   let output: OutputEntry[] = [];
   dirs.forEach((dir: string) => {
     const dirOutput: OutputEntry[] = [];
@@ -160,7 +160,11 @@ export function runParse(dirs: string[] = [], except = []) {
   return output;
 }
 
-export function run(dirs: string[] = [], outputFile = null, except = []) {
+export function run(
+  dirs: string[] = [],
+  outputFile: string | null = null,
+  except: RegExp[] = [],
+) {
   const output = runParse(dirs, except);
   if (outputFile) {
     saveOutput(output, outputFile);
