@@ -1,31 +1,22 @@
 #!/usr/bin/env node
-import { ArgumentParser } from 'argparse';
-import { run } from './index.js'; // https://nodejs.org/api/esm.html#esm_mandatory_file_extensions
+import {Command} from 'commander';
+import {run} from './index.js'; // https://nodejs.org/api/esm.html#esm_mandatory_file_extensions
 
-const parser = new ArgumentParser({
-  description: 'Python file tree with methods',
-});
+const program = new Command();
 
-parser.add_argument('-d', '--dir', {
-  help: 'Directory to search for Python files',
-  nargs: '*',
-  default: ['.'],
-});
+program
+  .name('pytree')
+  .description('Python file tree with methods')
+  .option('-d, --dir [dirs...]', 'Directory to search for Python files', '.')
+  .option('--except [patterns...]', 'Regular expression(s) to exclude files', [])
+  .option('--dest <file>', 'Destination file to save output')
+  .parse();
 
-parser.add_argument('--except', {
-  help: 'Regular expression(s) to exclude files',
-  nargs: '*',
-  default: [],
-});
-
-parser.add_argument('--dest', {
-  help: 'Destination file to save output',
-  default: null,
-});
-
-const args = parser.parse_args();
-const dirs = args.dir;
-const except = args.except.map((pattern: string) => new RegExp(pattern));
-const outputFile = args.dest;
+const options = program.opts();
+const dirs = Array.isArray(options.dir) ? options.dir : [options.dir || '.'];
+const except = (Array.isArray(options.except) ? options.except : []).map(
+  (pattern: string) => new RegExp(pattern),
+);
+const outputFile = options.dest || null;
 
 run(dirs, outputFile, except);

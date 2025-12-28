@@ -33,31 +33,24 @@ export function getClassAndMethodIndices(file: string): {
   const methods: MethodInfo[] = [];
 
   while ((classMatch = classRegex.exec(content)) !== null) {
-    classes.push({ name: classMatch[1], index: classMatch.index });
+    classes.push({name: classMatch[1], index: classMatch.index});
   }
 
   while ((methodMatch = methodRegex.exec(content)) !== null) {
-    methods.push({ name: methodMatch[1], index: methodMatch.index });
+    methods.push({name: methodMatch[1], index: methodMatch.index});
   }
 
   while ((methodMatch = asyncMmethodRegex.exec(content)) !== null) {
-    methods.push({ name: methodMatch[1], index: methodMatch.index });
+    methods.push({name: methodMatch[1], index: methodMatch.index});
   }
 
-  return { classes, methods, content };
+  return {classes, methods, content};
 }
 
-function getLine(
-  content: string,
-  indexStart: number,
-  indexEnd: number
-): string {
+function getLine(content: string, indexStart: number, indexEnd: number): string {
   const lineStart = content.lastIndexOf('\n', indexStart - 1) + 1;
   const lineEnd = content.indexOf('\n', indexEnd);
-  const line = content.substring(
-    lineStart,
-    lineEnd !== -1 ? lineEnd : undefined
-  );
+  const line = content.substring(lineStart, lineEnd !== -1 ? lineEnd : undefined);
   return line;
 }
 
@@ -65,7 +58,7 @@ export function walkTree(
   currentPath: string,
   level: number,
   output: OutputEntry[],
-  except: RegExpExecArray[]
+  except: RegExpExecArray[],
 ): void {
   fs.readdirSync(currentPath).forEach(name => {
     const filePath = path.join(currentPath, name);
@@ -73,7 +66,7 @@ export function walkTree(
 
     if (stat.isDirectory()) {
       if (!except.some((re: any) => re.test(filePath))) {
-        output.push({ level, type: 'dir', name });
+        output.push({level, type: 'dir', name});
         walkTree(filePath, level + 1, output, except);
       }
     } else if (
@@ -81,14 +74,14 @@ export function walkTree(
       isPythonFile(name) &&
       !except.some((re: any) => re.test(filePath))
     ) {
-      output.push({ level, type: 'file', name });
-      const { classes, methods, content } = getClassAndMethodIndices(filePath);
+      output.push({level, type: 'file', name});
+      const {classes, methods, content} = getClassAndMethodIndices(filePath);
 
       // Find the index of the first class
       let firstClassIndex = classes.length > 0 ? classes[0].index : Infinity;
 
       classes.forEach((classInfo, classIdx) => {
-        output.push({ level: level + 1, type: 'class', name: classInfo.name });
+        output.push({level: level + 1, type: 'class', name: classInfo.name});
         const classStart = classInfo.index;
         const classEnd = classes[classIdx + 1]?.index || Infinity;
 
@@ -139,14 +132,14 @@ export function walkTree(
 }
 
 export function printOutput(output: OutputEntry[]): void {
-  output.forEach(({ level, type, name }) => {
+  output.forEach(({level, type, name}) => {
     const prefix = '  '.repeat(level) + (type === 'dir' ? '├─> ' : '└─> ');
     console.log(prefix + name);
   });
 }
 
 export function saveOutput(output: OutputEntry[], filePath: string): void {
-  const lines = output.map(({ level, type, name }) => {
+  const lines = output.map(({level, type, name}) => {
     const prefix = '  '.repeat(level) + (type === 'dir' ? '├─> ' : '└─> ');
     return prefix + name;
   });
