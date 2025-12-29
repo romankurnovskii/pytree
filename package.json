@@ -43,7 +43,7 @@
     "README.md"
   ],
   "dependencies": {
-    "commander": "^12.1.0"
+    "commander": "^14.0.2"
   },
   "devDependencies": {
     "@types/node": "^25.0.2",
