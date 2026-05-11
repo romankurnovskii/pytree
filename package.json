@@ -60,7 +60,7 @@
     "typescript": "^5.0.3",
     "@types/jest": "^30.0.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
+    "lint-staged": "^17.0.4",
     "tsx": "^4.21.0"
   },
   "engines": {
